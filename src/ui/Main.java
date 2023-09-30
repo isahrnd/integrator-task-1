@@ -90,6 +90,33 @@ public class Main {
     }
 
     public void edit(){
+        System.out.println("Enter ID:");
+        String id = sc.nextLine();
+        System.out.println("Enter new title:");
+        String title = sc.nextLine();
+        System.out.println("Enter new description:");
+        String description = sc.nextLine();
+        System.out.println("Enter new due date (dd/mm/yyyy):");
+        String dueDate = sc.nextLine();
+        System.out.println("Select type \n 1: Task \n 2: Reminder");
+        int type = sc.nextInt();
+        sc.nextLine();
+        String msg;
+        if (type == 1){
+            System.out.println("The task is priority? \n 1: Yes \n 2: No");
+            int selection = sc.nextInt();
+            sc.nextLine();
+            int importance = 0;
+            if (selection == 1){
+                System.out.println("Select new importance level \n 3: Very important \n 2: Important \n 1: Less important");
+                importance = sc.nextInt();
+                sc.nextLine();
+            }
+            msg = controller.editElement(id, title, description, dueDate, selection == 1, importance);
+        } else {
+            msg = controller.editElement(id, title, description, dueDate);
+        }
+        System.out.println(msg);
 
     }
 
@@ -98,7 +125,6 @@ public class Main {
         String id = sc.nextLine();
         String msg = controller.deleteElement(id);
         System.out.println(msg);
-
     }
 
     public void viewList(){

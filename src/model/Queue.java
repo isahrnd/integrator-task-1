@@ -9,6 +9,18 @@ public class Queue<K, V> implements iQueue<K, V>{
         size = 0;
     }
 
+    public V search(K key) {
+        Node<K, V> currentNode = head;
+        while (currentNode != null) {
+            if (currentNode.getKey().equals(key)) {
+                return currentNode.getValue();
+            }
+            currentNode = currentNode.getNext();
+        }
+
+        return null;
+    }
+
     public void enqueue(K key, V value) {
         Node<K, V> node = new Node<>(key, value);
         if (isEmpty()) {

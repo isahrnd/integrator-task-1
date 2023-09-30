@@ -7,13 +7,13 @@ public class TaskReminderController {
 
     private final HashTable<String, TaskReminder> taskReminderTable;
     private final Queue<String, TaskReminder> nonPriorityTasks;
-    private final MinHeap priorityTasks;
+    private final MaxHeap priorityTasks;
     private final Stack<String, TaskReminder> actions;
 
     public TaskReminderController() {
         taskReminderTable = new HashTable<>();
         nonPriorityTasks = new Queue<>();
-        priorityTasks = new MinHeap();
+        priorityTasks = new MaxHeap();
         actions = new Stack<>();
     }
 
@@ -34,15 +34,29 @@ public class TaskReminderController {
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
             TaskReminder task = new TaskReminder(title, description, dueDate, importance, true);
-            taskReminderTable.insert(id, task);
-            if (!isPriority){
-                nonPriorityTasks.enqueue(id, task);
-            } else {
+            if (isPriority){
                 priorityTasks.insert(task);
+            } else {
+                nonPriorityTasks.enqueue(id, task);
             }
-        } catch (DuplicatedObjectException | InvalidDateException e){
+            try {
+                taskReminderTable.insert(id, task);
+            }  catch (DuplicatedObjectException e){
+                msg = e.getMessage();
+            }
+        } catch (HeapSizeException |  InvalidDateException e){
             msg = e.getMessage();
         }
+        return msg;
+    }
+
+    public String editElement(String id, String title, String description, String dueDateInput){
+        String msg = "Reminder edited successfully!";
+        return msg;
+    }
+
+    public String editElement(String id, String title, String description, String dueDateInput, boolean isPriority, int importance){
+        String msg = "Task edited successfully!";
         return msg;
     }
 
@@ -78,6 +92,5 @@ public class TaskReminderController {
             throw new InvalidDateException("Error: Invalid date format. Use dd/mm/yyyy.");
         }
     }
-
 
 }
