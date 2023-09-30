@@ -1,16 +1,20 @@
 package model;
 import java.util.Calendar;
 
-public abstract class TaskReminderBase {
+public class TaskReminder {
 
     private String title;
     private String description;
     private Calendar dueDate;
+    private int importanceLevel;
+    private boolean isTask;
 
-    public TaskReminderBase(String title, String description, Calendar dueDate) {
+    public TaskReminder(String title, String description, Calendar dueDate, int importanceLevel, boolean isTask) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
+        this.importanceLevel = importanceLevel;
+        this.isTask = isTask;
     }
 
     public String getTitle() {
@@ -35,5 +39,21 @@ public abstract class TaskReminderBase {
 
     public void setDueDate(Calendar dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public int getImportanceLevel() {
+        return importanceLevel;
+    }
+
+    public void setImportanceLevel(int importanceLevel) {
+        this.importanceLevel = importanceLevel;
+    }
+
+    public boolean isTask() {
+        return isTask;
+    }
+
+    public void setTask(boolean task) {
+        isTask = task;
     }
 }

@@ -1,14 +1,11 @@
 package model;
 
-import java.util.ArrayList;
-
 public class MinHeap implements MinPriorityQueue {
 
-    private ArrayList<Task> tasks;
-    private int size;
+    private TaskReminder[] heap;
 
     public MinHeap(){
-        tasks = new ArrayList<>();
+        heap = new TaskReminder[1000];
     }
 
     public void buildMinHeap(){
@@ -24,17 +21,17 @@ public class MinHeap implements MinPriorityQueue {
     }
 
     @Override
-    public void insert(Task task) {
+    public void insert(TaskReminder task) {
 
     }
 
     @Override
-    public Task extractMin() {
+    public TaskReminder extractMin() {
         return null;
     }
 
     @Override
-    public Task getMin() {
+    public TaskReminder getMin() {
         return null;
     }
 

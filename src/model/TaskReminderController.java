@@ -1,15 +1,14 @@
 package model;
 
-import Exceptions.DuplicatedObjectException;
-import Exceptions.InvalidDateException;
+import Exceptions.*;
 
 import java.util.Calendar;
 public class TaskReminderController {
 
-    private final HashTable<String, TaskReminderBase> taskReminderTable;
-    private final Queue<String, Task> nonPriorityTasks;
+    private final HashTable<String, TaskReminder> taskReminderTable;
+    private final Queue<String, TaskReminder> nonPriorityTasks;
     private final MinHeap priorityTasks;
-    private final Stack<String, TaskReminderBase> actions;
+    private final Stack<String, TaskReminder> actions;
 
     public TaskReminderController() {
         taskReminderTable = new HashTable<>();
@@ -22,7 +21,7 @@ public class TaskReminderController {
         String msg = "New reminder added!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            Reminder reminder = new Reminder(title, description, dueDate);
+            TaskReminder reminder = new TaskReminder(title, description, dueDate, 0, false);
             taskReminderTable.insert(id, reminder);
         } catch (DuplicatedObjectException | InvalidDateException e) {
             msg = e.getMessage();
@@ -34,7 +33,7 @@ public class TaskReminderController {
         String msg = "New task added!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            Task task = new Task(title, description, dueDate, importance);
+            TaskReminder task = new TaskReminder(title, description, dueDate, importance, true);
             taskReminderTable.insert(id, task);
             if (!isPriority){
                 nonPriorityTasks.enqueue(id, task);

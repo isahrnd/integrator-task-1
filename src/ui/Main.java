@@ -70,7 +70,7 @@ public class Main {
         System.out.println("Select type \n 1: Task \n 2: Reminder");
         int type = sc.nextInt();
         sc.nextLine();
-        String msg = "";
+        String msg;
         if (type == 1){
             System.out.println("The task is priority? \n 1: Yes \n 2: No");
             int selection = sc.nextInt();
