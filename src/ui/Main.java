@@ -19,13 +19,13 @@ public class Main {
     public void menu(){
         int choice;
         do {
-            System.out.println("-WELCOME TO THE MENU-");
-            System.out.println("--Select an option---");
-            System.out.println("1: Add element.......");
-            System.out.println("2: Edit element......");
-            System.out.println("3: Delete element....");
-            System.out.println("4: Undo action.......");
-            System.out.println("0: Exit..............");
+            System.out.println("-WELCOME TO THE APP-");
+            System.out.println("--Select an option--");
+            System.out.println("1: Add element......");
+            System.out.println("2: Edit element.....");
+            System.out.println("3: Delete element...");
+            System.out.println("4: Undo action......");
+            System.out.println("0: Exit.............");
             choice = sc.nextInt();
             sc.nextLine();
             switch(choice){
@@ -46,6 +46,11 @@ public class Main {
                     break;
                 case 4:
                     undo();
+                    System.out.println("Press Enter to return to the menu...");
+                    sc.nextLine();
+                    break;
+                case 5:
+                    viewList();
                     System.out.println("Press Enter to return to the menu...");
                     sc.nextLine();
                     break;
@@ -86,7 +91,6 @@ public class Main {
             msg = controller.addElement(id, title, description, dueDate);
         }
         System.out.println(msg);
-
     }
 
     public void edit(){
@@ -117,7 +121,6 @@ public class Main {
             msg = controller.editElement(id, title, description, dueDate);
         }
         System.out.println(msg);
-
     }
 
     public void delete(){
@@ -128,7 +131,12 @@ public class Main {
     }
 
     public void viewList(){
-
+        String msg = controller.showList();
+        if (msg != null){
+            System.out.println(msg);
+        } else {
+            System.out.println("Error: there are no elements registered yet.");
+        }
     }
 
     public void undo(){

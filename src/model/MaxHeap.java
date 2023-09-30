@@ -34,12 +34,33 @@ public class MaxHeap implements iMaxPriorityQueue {
         return heap[0] == null;
     }
 
+    public int searchTaskIndex(TaskReminder task){
+        for (int i = 0; i < heapSize - 1; i++){
+            if (heap[i] == task){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public TaskReminder[] getHeap(){
+        return heap;
+    }
+
+    public int getHeapSize(){
+        return heapSize;
+    }
+
+    public void setHeapSize(int heapSize){
+        this.heapSize = heapSize;
+    }
+
     @Override
     public void insert(TaskReminder task) throws HeapSizeException {
         if(heapSize > 1000){
             throw new HeapSizeException("Error: Maximum size reached.");
         }
-        heap[heapSize] = new TaskReminder(null, null, null, -1, true);
+        heap[heapSize] = new TaskReminder(null,null, null, null, -1, true);
         increaseKey(heapSize, task);
         heapSize++;
     }

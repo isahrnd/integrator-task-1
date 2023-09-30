@@ -3,13 +3,15 @@ import java.util.Calendar;
 
 public class TaskReminder {
 
+    private final String id;
     private String title;
     private String description;
     private Calendar dueDate;
     private int importanceLevel;
     private boolean isTask;
 
-    public TaskReminder(String title, String description, Calendar dueDate, int importanceLevel, boolean isTask) {
+    public TaskReminder(String id, String title, String description, Calendar dueDate, int importanceLevel, boolean isTask) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
@@ -55,5 +57,16 @@ public class TaskReminder {
 
     public void setTask(boolean task) {
         isTask = task;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskReminder{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", dueDate=" + dueDate +
+                ", importanceLevel=" + importanceLevel +
+                '}';
     }
 }

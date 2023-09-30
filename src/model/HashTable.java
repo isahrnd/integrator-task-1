@@ -71,4 +71,16 @@ public class HashTable<K, V> implements iHashTable<K, V>{
         return Math.abs(hashCode) % TABLE_SIZE;
     }
 
+    public boolean isEmpty() {
+        for (Node<K, V> kvNode : table) {
+            if (kvNode != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Node<K, V>[] getTable() {
+        return table;
+    }
 }

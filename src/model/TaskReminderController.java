@@ -21,7 +21,7 @@ public class TaskReminderController {
         String msg = "New reminder added!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            TaskReminder reminder = new TaskReminder(title, description, dueDate, 0, false);
+            TaskReminder reminder = new TaskReminder(id, title, description, dueDate, 0, false);
             taskReminderTable.insert(id, reminder);
         } catch (DuplicatedObjectException | InvalidDateException e) {
             msg = e.getMessage();
@@ -33,7 +33,7 @@ public class TaskReminderController {
         String msg = "New task added!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            TaskReminder task = new TaskReminder(title, description, dueDate, importance, true);
+            TaskReminder task = new TaskReminder(id, title, description, dueDate, importance, true);
             if (isPriority){
                 priorityTasks.insert(task);
             } else {
@@ -52,11 +52,64 @@ public class TaskReminderController {
 
     public String editElement(String id, String title, String description, String dueDateInput){
         String msg = "Reminder edited successfully!";
+        try {
+            Calendar dueDate = validateDueDate(dueDateInput);
+            TaskReminder reminder = taskReminderTable.search(id);
+            if (reminder == null || reminder.isTask()){
+                msg = "Error: The reminder doesn't exist.";
+            } else {
+                reminder.setTitle(title);
+                reminder.setDescription(description);
+                reminder.setDueDate(dueDate);
+            }
+        } catch (InvalidDateException e){
+            msg = e.getMessage();
+        }
         return msg;
     }
 
     public String editElement(String id, String title, String description, String dueDateInput, boolean isPriority, int importance){
         String msg = "Task edited successfully!";
+        try {
+            Calendar dueDate = validateDueDate(dueDateInput);
+            TaskReminder taskHash = taskReminderTable.search(id);
+            if (taskHash == null || !taskHash.isTask()){
+                msg = "Error: The task doesn't exist.";
+            } else {
+                taskHash.setTitle(title);
+                taskHash.setDescription(description);
+                taskHash.setDueDate(dueDate);
+                if (taskHash.getImportanceLevel() != 0){
+                    int index = priorityTasks.searchTaskIndex(taskHash);
+                    if (isPriority){
+                        TaskReminder priorityTask = priorityTasks.getHeap()[index];
+                        priorityTask.setTitle(title);
+                        priorityTask.setDescription(description);
+                        priorityTask.setDueDate(dueDate);
+                        priorityTask.setImportanceLevel(importance);
+                        priorityTasks.maxHeapify(0);
+                    } else {
+                        priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize()-1];
+                        priorityTasks.setHeapSize(priorityTasks.getHeapSize()-1);
+                        priorityTasks.maxHeapify(0);
+                        nonPriorityTasks.enqueue(id, taskHash);
+                    }
+                } else {
+                   Node<String, TaskReminder> node = nonPriorityTasks.search(id);
+                    if (!isPriority){
+                        node.getValue().setTitle(title);
+                        node.getValue().setDescription(description);
+                        node.getValue().setDueDate(dueDate);
+                    } else {
+                        nonPriorityTasks.delete(node);
+                        priorityTasks.insert(node.getValue());
+                    }
+                }
+                taskHash.setImportanceLevel(importance);
+            }
+        } catch (InvalidDateException | HeapSizeException e){
+            msg = e.getMessage();
+        }
         return msg;
     }
 
@@ -66,6 +119,38 @@ public class TaskReminderController {
             msg = "Error: The reminder was not found.";
         }
         return msg;
+    }
+
+    public String showList(){
+        if (!taskReminderTable.isEmpty()){
+            StringBuilder list = new StringBuilder("PRIORITY TASKS:\n");
+            for (int i = 0; i < priorityTasks.getHeapSize()-1; i++){
+                list.append(priorityTasks.getHeap()[i]);
+                list.append("\n");
+            }
+            list.append("NON PRIORITY TASKS:\n");
+            for (int i = 0; i < nonPriorityTasks.size(); i++){
+                Node<String, TaskReminder> currentNode = nonPriorityTasks.peek();
+                while (currentNode != null) {
+                    list.append(currentNode.getValue());
+                    currentNode = currentNode.getNext();
+                    list.append("\n");
+                }
+            }
+            list.append("REMINDERS:\n");
+            for (int i = 0; i < taskReminderTable.getTable().length; i++){
+                Node<String, TaskReminder> currentNode = taskReminderTable.getTable()[i];
+                while (currentNode != null) {
+                    if (!currentNode.getValue().isTask()) {
+                        list.append(currentNode.getValue());
+                        list.append("\n");
+                    }
+                    currentNode = currentNode.getNext();
+                }
+            }
+            return list.toString();
+        }
+        return null;
     }
 
     private Calendar validateDueDate(String dueDateInput) throws InvalidDateException {
