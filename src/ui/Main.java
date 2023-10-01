@@ -25,6 +25,7 @@ public class Main {
             System.out.println("2: Edit element.....");
             System.out.println("3: Delete element...");
             System.out.println("4: Undo action......");
+            System.out.println("5: View list........");
             System.out.println("0: Exit.............");
             choice = sc.nextInt();
             sc.nextLine();
@@ -132,11 +133,7 @@ public class Main {
 
     public void viewList(){
         String msg = controller.showList();
-        if (msg != null){
-            System.out.println(msg);
-        } else {
-            System.out.println("Error: there are no elements registered yet.");
-        }
+        System.out.println(msg);
     }
 
     public void undo(){

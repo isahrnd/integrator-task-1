@@ -90,8 +90,10 @@ public class TaskReminderController {
                         priorityTasks.maxHeapify(0);
                     } else {
                         priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize()-1];
+                        priorityTasks.getHeap()[priorityTasks.getHeapSize()-1] = null;
                         priorityTasks.setHeapSize(priorityTasks.getHeapSize()-1);
                         priorityTasks.maxHeapify(0);
+                        taskHash.setImportanceLevel(0);
                         nonPriorityTasks.enqueue(id, taskHash);
                     }
                 } else {
@@ -102,7 +104,8 @@ public class TaskReminderController {
                         node.getValue().setDueDate(dueDate);
                     } else {
                         nonPriorityTasks.delete(node);
-                        priorityTasks.insert(node.getValue());
+                        taskHash.setImportanceLevel(importance);
+                        priorityTasks.insert(taskHash);
                     }
                 }
                 taskHash.setImportanceLevel(importance);
@@ -114,9 +117,26 @@ public class TaskReminderController {
     }
 
     public String deleteElement(String id){
-        String msg = "Deleted reminder!";
-        if (!taskReminderTable.delete(id)){
-            msg = "Error: The reminder was not found.";
+        String msg = "Reminder removed!.";
+        TaskReminder element = taskReminderTable.search(id);
+        if (element != null){
+            if (!element.isTask()){
+                taskReminderTable.delete(id);
+            } else {
+                if (element.getImportanceLevel() != 0){
+                    int index = priorityTasks.searchTaskIndex(element);
+                    priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize()-1];
+                    priorityTasks.getHeap()[priorityTasks.getHeapSize()-1] = null;
+                    priorityTasks.setHeapSize(priorityTasks.getHeapSize()-1);
+                    priorityTasks.maxHeapify(0);
+                } else {
+                    Node<String, TaskReminder> node = nonPriorityTasks.search(id);
+                    nonPriorityTasks.delete(node);
+                }
+                msg = "Task removed!.";
+            }
+        } else {
+            msg = "Error: The element was not found.";
         }
         return msg;
     }
@@ -150,7 +170,7 @@ public class TaskReminderController {
             }
             return list.toString();
         }
-        return null;
+        return "Error: there are no elements registered yet.";
     }
 
     private Calendar validateDueDate(String dueDateInput) throws InvalidDateException {

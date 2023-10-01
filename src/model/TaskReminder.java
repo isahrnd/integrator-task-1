@@ -1,5 +1,6 @@
 package model;
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 public class TaskReminder {
 
@@ -59,14 +60,13 @@ public class TaskReminder {
         isTask = task;
     }
 
-    @Override
     public String toString() {
-        return "TaskReminder{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", dueDate=" + dueDate +
-                ", importanceLevel=" + importanceLevel +
-                '}';
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String date = dateFormat.format(dueDate.getTime());
+        return "Id: " + id + "\n" +
+                "Title: " + title + "\n" +
+                "Description: " + description + "\n" +
+                "Due date: " + date + "\n" +
+                "Importance: " + importanceLevel;
     }
 }
