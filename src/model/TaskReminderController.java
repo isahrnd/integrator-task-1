@@ -57,10 +57,11 @@ public class TaskReminderController {
         String msg = "Reminder edited successfully!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            TaskReminder reminder = taskReminderTable.search(id);
-            if (reminder == null || reminder.isTask()){
+            Node<String, TaskReminder> hashNode = taskReminderTable.search(id);
+            if (hashNode == null || hashNode.getValue().isTask()){
                 msg = "Error: The reminder doesn't exist.";
             } else {
+                TaskReminder reminder = hashNode.getValue();
                 actions.push(id, new Action("Edit element", reminder));
                 reminder.setTitle(title);
                 reminder.setDescription(description);
@@ -76,10 +77,11 @@ public class TaskReminderController {
         String msg = "Task edited successfully!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
-            TaskReminder task = taskReminderTable.search(id);
-            if (task == null || !task.isTask()){
+            Node<String, TaskReminder> hashNode = taskReminderTable.search(id);
+            if (hashNode == null || !hashNode.getValue().isTask()){
                 msg = "Error: The task doesn't exist.";
             } else {
+                TaskReminder task = hashNode.getValue();
                 actions.push(id, new Action("Edit element", task));
                 task.setTitle(title);
                 task.setDescription(description);
@@ -102,13 +104,13 @@ public class TaskReminderController {
                         nonPriorityTasks.enqueue(id, task);
                     }
                 } else {
-                   Node<String, TaskReminder> node = nonPriorityTasks.search(id);
+                   Node<String, TaskReminder> queueNode = nonPriorityTasks.search(id);
                     if (!isPriority){
-                        node.getValue().setTitle(title);
-                        node.getValue().setDescription(description);
-                        node.getValue().setDueDate(dueDate);
+                        queueNode.getValue().setTitle(title);
+                        queueNode.getValue().setDescription(description);
+                        queueNode.getValue().setDueDate(dueDate);
                     } else {
-                        nonPriorityTasks.delete(node);
+                        nonPriorityTasks.delete(queueNode);
                         task.setImportanceLevel(importance);
                         priorityTasks.insert(task);
                     }
@@ -123,12 +125,17 @@ public class TaskReminderController {
 
     public String deleteElement(String id){
         String msg = "Reminder removed!.";
-        TaskReminder element = taskReminderTable.search(id);
-        if (element != null){
-            actions.push(id, new Action("Delete element", element));
-            if (!element.isTask()){
-                taskReminderTable.delete(id);
-            } else {
+        Node<String, TaskReminder> hashNode = taskReminderTable.search(id);
+        if (hashNode != null){
+            TaskReminder element = hashNode.getValue();
+            Node<String, TaskReminder> targetNode = hashNode.getPrevious();
+            TaskReminder targetElement = null;
+            if (targetNode != null){
+                targetElement = targetNode.getValue();
+            }
+            actions.push(id, new Action("Delete element", element, targetElement));
+            taskReminderTable.delete(id);
+            if (element.isTask()){
                 if (element.getImportanceLevel() != 0){
                     int index = priorityTasks.searchTaskIndex(element);
                     priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize()-1];
@@ -136,8 +143,8 @@ public class TaskReminderController {
                     priorityTasks.setHeapSize(priorityTasks.getHeapSize()-1);
                     priorityTasks.maxHeapify(0);
                 } else {
-                    Node<String, TaskReminder> node = nonPriorityTasks.search(id);
-                    nonPriorityTasks.delete(node);
+                    Node<String, TaskReminder> queueNode = nonPriorityTasks.search(id);
+                    nonPriorityTasks.delete(queueNode);
                 }
                 msg = "Task removed!.";
             }
@@ -168,11 +175,14 @@ public class TaskReminderController {
                         editElement(id, title, description, dueDate, importance != 0, importance);
                     }
                 } else {
-                    if (!record.isTask()){
-                        addElement(id, title, description, dueDate);
-                    } else {
-                        addElement(id, title,description, dueDate, importance != 0, importance);
+                    String targetID = null;
+                    if (action.getTarget() != null){
+                        targetID = action.getTarget().getId();
                     }
+                    addAfterTarget(targetID, record);
+                    try {
+                        priorityTasks.insert(record);
+                    } catch (HeapSizeException ignored) {}
                 }
             }
         }
@@ -208,6 +218,33 @@ public class TaskReminderController {
             return list.toString();
         }
         return "Error: there are no elements registered yet.";
+    }
+
+    private void addAfterTarget(String targetID, TaskReminder element){
+        Node<String, TaskReminder> nodeToAdd = new Node<>(element.getId(), element);
+        if (targetID != null){
+            //Return node to hash table
+            Node<String, TaskReminder> hashTarget = taskReminderTable.search(targetID);
+            if (hashTarget.getNext() != null){
+                hashTarget.getNext().setPrevious(nodeToAdd);
+                nodeToAdd.setNext(hashTarget.getNext());
+            }
+            hashTarget.setNext(nodeToAdd);
+            nodeToAdd.setPrevious(hashTarget);
+            //Return node to queue
+            Node<String, TaskReminder> queueTarget = taskReminderTable.search(targetID);
+            if (queueTarget.getNext() != null){
+                queueTarget.getNext().setPrevious(nodeToAdd);
+                nodeToAdd.setNext(queueTarget.getNext());
+            }
+            queueTarget.setNext(nodeToAdd);
+            nodeToAdd.setPrevious(queueTarget);
+        } else {
+            try {
+                taskReminderTable.insert(element.getId(), element);
+            } catch (DuplicatedObjectException ignored) {}
+            nonPriorityTasks.enqueue(element.getId(), element);
+        }
     }
 
     private Calendar validateDueDate(String dueDateInput) throws InvalidDateException {

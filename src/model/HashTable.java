@@ -30,13 +30,13 @@ public class HashTable<K, V> implements iHashTable<K, V>{
     }
 
     @Override
-    public V search(K key) {
+    public Node<K, V> search(K key) {
         int index = hash(key);
         if (table[index] != null){
             Node<K, V> currentNode = table[index];
             while (currentNode != null) {
                 if (currentNode.getKey().equals(key)) {
-                    return currentNode.getValue();
+                    return currentNode;
                 }
                 currentNode = currentNode.getNext();
             }
@@ -45,7 +45,7 @@ public class HashTable<K, V> implements iHashTable<K, V>{
     }
 
     @Override
-    public boolean delete(K key) {
+    public void delete(K key) {
         int index = hash(key);
         Node<K, V> currentNode = table[index];
         Node<K, V> previousNode = null;
@@ -57,12 +57,11 @@ public class HashTable<K, V> implements iHashTable<K, V>{
                     table[index] = currentNode.getNext();
                 }
                 currentNode.setNext(null);
-                return true;
+                return;
             }
             previousNode = currentNode;
             currentNode = currentNode.getNext();
         }
-        return false;
     }
 
     @Override

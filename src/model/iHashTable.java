@@ -4,7 +4,7 @@ import Exceptions.DuplicatedObjectException;
 
 public interface iHashTable <K,V> {
     void insert(K key, V value) throws DuplicatedObjectException;
-    V search(K key);
-    boolean delete(K key);
+    Node<K,V> search(K key);
+    void delete(K key);
     int hash(K key);
 }
