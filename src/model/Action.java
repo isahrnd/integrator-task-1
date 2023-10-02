@@ -3,31 +3,21 @@ package model;
 public class Action {
 
     private String type;
-    private TaskReminder taskReminder;
-    private TaskReminder original;
+    private TaskReminder record;
 
-    public Action(String type, TaskReminder taskReminder) {
+    public Action(String type, TaskReminder record) {
         this.type = type;
-        this.taskReminder= taskReminder;
-    }
-
-    public Action(String type, TaskReminder original, TaskReminder modified) {
-        this.type = type;
-        this.original = original;
-        this.taskReminder = modified;
+        this.record = record;
     }
 
     public String getType() {
         return type;
     }
 
-    public TaskReminder getTaskReminder() {
-        return taskReminder;
+    public TaskReminder getRecord() {
+        return record;
     }
 
-    public TaskReminder getOriginal() {
-        return original;
-    }
 }
 
 

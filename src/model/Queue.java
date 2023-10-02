@@ -1,6 +1,7 @@
 package model;
 
 public class Queue<K, V> implements iQueue<K, V>{
+
     private Node<K, V> head;
     private Node<K, V> tail;
     private int size;
@@ -8,7 +9,6 @@ public class Queue<K, V> implements iQueue<K, V>{
     public Queue() {
         size = 0;
     }
-
 
     public Node<K, V> search(K key) {
         Node<K, V> currentNode = head;

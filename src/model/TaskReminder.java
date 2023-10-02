@@ -20,6 +20,8 @@ public class TaskReminder {
         this.isTask = isTask;
     }
 
+    public String getId() {return id; }
+
     public String getTitle() {
         return title;
     }

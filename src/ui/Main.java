@@ -46,7 +46,7 @@ public class Main {
                     sc.nextLine();
                     break;
                 case 4:
-                    undo();
+                    undoAction();
                     System.out.println("Press Enter to return to the menu...");
                     sc.nextLine();
                     break;
@@ -136,7 +136,7 @@ public class Main {
         System.out.println(msg);
     }
 
-    public void undo(){
-
+    public void undoAction(){
+        controller.undoAction();
     }
 }
