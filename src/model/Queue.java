@@ -58,11 +58,11 @@ public class Queue<K, V> implements iQueue<K, V>{
         Node<K, V> node = new Node<>(key, value);
         if (isEmpty()) {
             head = node;
-            tail = node;
         } else {
+            node.setPrevious(tail);
             tail.setNext(node);
-            head = node;
         }
+        tail = node;
         size++;
     }
 
@@ -72,11 +72,14 @@ public class Queue<K, V> implements iQueue<K, V>{
             return null;
         }
         V value = head.getValue();
-        head = head.getNext();
-        size--;
-        if (isEmpty()) {
+        Node<K, V> newHead = head.getNext();
+        if (newHead != null) {
+            newHead.setPrevious(null);
+        } else {
             tail = null;
         }
+        head = newHead;
+        size--;
         return value;
     }
 
