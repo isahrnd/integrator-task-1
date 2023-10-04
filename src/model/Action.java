@@ -4,17 +4,19 @@ public class Action {
 
     private String type;
     private TaskReminder record;
-    private TaskReminder target;
+    private TaskReminder targetHashElement;
+    private TaskReminder targetQueueElement;
 
     public Action(String type, TaskReminder record) {
         this.type = type;
         this.record = record;
     }
 
-    public Action(String type, TaskReminder record, TaskReminder target) {
+    public Action(String type, TaskReminder record, TaskReminder targetHashElement, TaskReminder targetQueueElement) {
         this.type = type;
         this.record = record;
-        this.target = target;
+        this.targetHashElement = targetHashElement;
+        this.targetQueueElement = targetQueueElement;
     }
 
     public String getType() {
@@ -25,7 +27,9 @@ public class Action {
         return record;
     }
 
-    public TaskReminder getTarget() {return target; }
+    public TaskReminder getTargetHashElement() {return targetHashElement; }
+
+    public TaskReminder getTargetQueueElement() {return  targetQueueElement; }
 
 }
 

@@ -16,12 +16,12 @@ public class MaxHeap implements iMaxPriorityQueue {
         int l = left(i);
         int r = right(i);
         int largest;
-        if (l <= heapSize && heap[l].getImportanceLevel() > heap[i].getImportanceLevel()){
+        if (l < heapSize && heap[l].getImportanceLevel() > heap[i].getImportanceLevel()){
             largest = l;
         } else {
             largest = i;
         }
-        if (r <= heapSize && heap[r].getImportanceLevel() > heap[largest].getImportanceLevel()){
+        if (r < heapSize && heap[r].getImportanceLevel() > heap[largest].getImportanceLevel()){
             largest = r;
         }
         if (largest != i){
@@ -35,7 +35,7 @@ public class MaxHeap implements iMaxPriorityQueue {
     }
 
     public int searchTaskIndex(TaskReminder task){
-        for (int i = 0; i < heapSize - 1; i++){
+        for (int i = 0; i < heapSize; i++){
             if (heap[i] == task){
                 return i;
             }

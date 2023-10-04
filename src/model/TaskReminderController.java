@@ -127,27 +127,36 @@ public class TaskReminderController {
         String msg = "Reminder removed!.";
         Node<String, TaskReminder> hashNode = taskReminderTable.search(id);
         if (hashNode != null){
-            TaskReminder element = hashNode.getValue();
-            Node<String, TaskReminder> targetNode = hashNode.getPrevious();
-            TaskReminder targetElement = null;
-            if (targetNode != null){
-                targetElement = targetNode.getValue();
-            }
-            actions.push(id, new Action("Delete element", element, targetElement));
             taskReminderTable.delete(id);
+            Node<String, TaskReminder> targetHashNode = hashNode.getPrevious();
+            TaskReminder targetHashElement = null;
+            if (targetHashNode != null){
+                targetHashElement = targetHashNode.getValue();
+            }
+            TaskReminder element = hashNode.getValue();
+            Node<String, TaskReminder> queueNode = null;
             if (element.isTask()){
                 if (element.getImportanceLevel() != 0){
                     int index = priorityTasks.searchTaskIndex(element);
-                    priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize()-1];
-                    priorityTasks.getHeap()[priorityTasks.getHeapSize()-1] = null;
+                    priorityTasks.getHeap()[index] = priorityTasks.getHeap()[priorityTasks.getHeapSize() - 1];
+                    priorityTasks.getHeap()[priorityTasks.getHeapSize() - 1] = null;
                     priorityTasks.setHeapSize(priorityTasks.getHeapSize()-1);
                     priorityTasks.maxHeapify(0);
                 } else {
-                    Node<String, TaskReminder> queueNode = nonPriorityTasks.search(id);
+                    queueNode = nonPriorityTasks.search(id);
                     nonPriorityTasks.delete(queueNode);
                 }
-                msg = "Task removed!.";
+                msg = "Task removed!";
             }
+            Node<String, TaskReminder> targetQueueNode = null;
+            if (queueNode != null){
+                targetQueueNode = queueNode.getPrevious();
+            }
+            TaskReminder targetQueueElement = null;
+            if (targetQueueNode != null){
+                targetQueueElement = targetQueueNode.getValue();
+            }
+            actions.push(id, new Action("Delete element", element, targetHashElement, targetQueueElement));
         } else {
             msg = "Error: The element was not found.";
         }
@@ -155,7 +164,7 @@ public class TaskReminderController {
     }
 
     public void undoAction(){
-        if (actions.isEmpty()) {
+        if (!actions.isEmpty()) {
             Action action = actions.pop();
             String actionType = action.getType();
             TaskReminder record = action.getRecord();
@@ -175,14 +184,20 @@ public class TaskReminderController {
                         editElement(id, title, description, dueDate, importance != 0, importance);
                     }
                 } else {
-                    String targetID = null;
-                    if (action.getTarget() != null){
-                        targetID = action.getTarget().getId();
+                    if (record.getImportanceLevel() != 0){
+                        try {
+                            priorityTasks.insert(record);
+                        } catch (HeapSizeException ignored) {}
+                    } else {
+                        String targetHashID = null, targetQueueID = null;
+                        if (action.getTargetHashElement() != null){
+                            targetHashID = action.getTargetHashElement().getId();
+                        }
+                        if (action.getTargetQueueElement() != null){
+                            targetQueueID = action.getTargetQueueElement().getId();
+                        }
+                        addAfterTarget(targetHashID, targetQueueID, record);
                     }
-                    addAfterTarget(targetID, record);
-                    try {
-                        priorityTasks.insert(record);
-                    } catch (HeapSizeException ignored) {}
                 }
             }
         }
@@ -228,19 +243,25 @@ public class TaskReminderController {
         return "Error: there are no elements registered yet.";
     }
 
-    private void addAfterTarget(String targetID, TaskReminder element){
+    private void addAfterTarget(String targetHashID, String targetQueueID, TaskReminder element){
         Node<String, TaskReminder> nodeToAdd = new Node<>(element.getId(), element);
-        if (targetID != null){
+        if (targetHashID != null){
             //Return node to hash table
-            Node<String, TaskReminder> hashTarget = taskReminderTable.search(targetID);
+            Node<String, TaskReminder> hashTarget = taskReminderTable.search(targetHashID);
             if (hashTarget.getNext() != null){
                 hashTarget.getNext().setPrevious(nodeToAdd);
                 nodeToAdd.setNext(hashTarget.getNext());
             }
             hashTarget.setNext(nodeToAdd);
             nodeToAdd.setPrevious(hashTarget);
+        } else {
+            try {
+                taskReminderTable.insert(element.getId(), element);
+            } catch (DuplicatedObjectException ignored) {}
+        }
+        if (targetQueueID != null){
             //Return node to queue
-            Node<String, TaskReminder> queueTarget = taskReminderTable.search(targetID);
+            Node<String, TaskReminder> queueTarget = nonPriorityTasks.search(targetQueueID);
             if (queueTarget.getNext() != null){
                 queueTarget.getNext().setPrevious(nodeToAdd);
                 nodeToAdd.setNext(queueTarget.getNext());
@@ -248,9 +269,6 @@ public class TaskReminderController {
             queueTarget.setNext(nodeToAdd);
             nodeToAdd.setPrevious(queueTarget);
         } else {
-            try {
-                taskReminderTable.insert(element.getId(), element);
-            } catch (DuplicatedObjectException ignored) {}
             nonPriorityTasks.enqueue(element.getId(), element);
         }
     }
