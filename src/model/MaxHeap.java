@@ -83,7 +83,7 @@ public class MaxHeap implements iMaxPriorityQueue {
             return null;
         }
         TaskReminder max = maximum();
-        heap[0] = heap[heapSize];
+        heap[0] = heap[heapSize - 1];
         heapSize--;
         maxHeapify(0);
         return max;
@@ -95,7 +95,7 @@ public class MaxHeap implements iMaxPriorityQueue {
     }
 
     private int parent(int index) {
-        return (index - 1) / 2;
+        return index / 2;
     }
 
     private void swap(int i, int j) {
@@ -105,10 +105,10 @@ public class MaxHeap implements iMaxPriorityQueue {
     }
 
     private int left(int i){
-        return 2 * i;
+        return 2 * i + 1;
     }
 
     private int right(int i){
-        return 2 * i + 1;
+        return 2 * i + 2;
     }
 }

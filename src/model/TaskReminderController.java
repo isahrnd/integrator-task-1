@@ -191,28 +191,36 @@ public class TaskReminderController {
     public String showList(){
         if (!taskReminderTable.isEmpty()){
             StringBuilder list = new StringBuilder("PRIORITY TASKS:\n");
-            for (int i = 0; i < priorityTasks.getHeapSize()-1; i++){
-                list.append(priorityTasks.getHeap()[i]);
-                list.append("\n");
+            TaskReminder[] heapElements = new TaskReminder[priorityTasks.getHeapSize()];
+            //extract and save the maximum
+            for (int i = 0; i < heapElements.length; i++){
+                TaskReminder max = priorityTasks.extractMaximum();
+                list.append("\n").append(max.toString()).append("\n");
+                heapElements[i] = max;
             }
-            list.append("NON PRIORITY TASKS:\n");
-            for (int i = 0; i < nonPriorityTasks.size(); i++){
-                Node<String, TaskReminder> currentNode = nonPriorityTasks.peek();
-                while (currentNode != null) {
-                    list.append(currentNode.getValue());
-                    currentNode = currentNode.getNext();
-                    list.append("\n");
+            //reintegrate the extracted elements into the heap.
+            for (TaskReminder element : heapElements) {
+                try {
+                    priorityTasks.insert(element);
+                } catch (HeapSizeException ignored) {
                 }
             }
-            list.append("REMINDERS:\n");
+
+            list.append("\nNON PRIORITY TASKS:\n");
+            Node<String, TaskReminder> currentQueueNode = nonPriorityTasks.peek();
+            while (currentQueueNode != null) {
+                list.append("\n").append(currentQueueNode.getValue()).append("\n");
+                currentQueueNode = currentQueueNode.getNext();
+            }
+
+            list.append("\nREMINDERS:\n");
             for (int i = 0; i < taskReminderTable.getTable().length; i++){
-                Node<String, TaskReminder> currentNode = taskReminderTable.getTable()[i];
-                while (currentNode != null) {
-                    if (!currentNode.getValue().isTask()) {
-                        list.append(currentNode.getValue());
-                        list.append("\n");
+                Node<String, TaskReminder> currentHashNode = taskReminderTable.getTable()[i];
+                while (currentHashNode != null) {
+                    if (!currentHashNode.getValue().isTask()) {
+                        list.append("\n").append(currentHashNode.getValue()).append("\n");
                     }
-                    currentNode = currentNode.getNext();
+                    currentHashNode = currentHashNode.getNext();
                 }
             }
             return list.toString();
