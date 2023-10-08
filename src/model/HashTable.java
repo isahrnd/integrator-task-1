@@ -70,6 +70,7 @@ public class HashTable<K, V> implements iHashTable<K, V>{
         return Math.abs(hashCode) % TABLE_SIZE;
     }
 
+    @Override
     public boolean isEmpty() {
         for (Node<K, V> kvNode : table) {
             if (kvNode != null) {

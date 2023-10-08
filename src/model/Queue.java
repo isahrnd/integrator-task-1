@@ -22,6 +22,7 @@ public class Queue<K, V> implements iQueue<K, V>{
     }
 
     public void delete(Node<K, V> nodeToDelete) {
+        size--;
         //node to delete is head.
         if (nodeToDelete.equals(head)) {
             head = nodeToDelete.getNext();
@@ -97,4 +98,15 @@ public class Queue<K, V> implements iQueue<K, V>{
         return size;
     }
 
+    public void setSize(int size){
+        this.size = size;
+    }
+
+    public Node<K, V> getHead() {
+        return head;
+    }
+
+    public void setHead(Node<K, V> head) {
+        this.head = head;
+    }
 }
