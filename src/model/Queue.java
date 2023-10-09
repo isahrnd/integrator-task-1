@@ -6,7 +6,7 @@ public class Queue<K, V> implements iQueue<K, V>{
     private Node<K, V> tail;
     private int size;
 
-    public Queue() {
+    public Queue(){
         size = 0;
     }
 
