@@ -4,19 +4,25 @@ public class Action {
 
     private String type;
     private TaskReminder record;
-    private TaskReminder targetHashElement;
-    private TaskReminder targetQueueElement;
+    private String targetHashID;
+    private String targetQueueID;
 
     public Action(String type, TaskReminder record) {
         this.type = type;
         this.record = record;
     }
 
-    public Action(String type, TaskReminder record, TaskReminder targetHashElement, TaskReminder targetQueueElement) {
+    public Action(String type, TaskReminder record, String targetHashID) {
         this.type = type;
         this.record = record;
-        this.targetHashElement = targetHashElement;
-        this.targetQueueElement = targetQueueElement;
+        this.targetHashID= targetHashID;
+    }
+
+    public Action(String type, TaskReminder record, String targetHashID, String targetQueueID) {
+        this.type = type;
+        this.record = record;
+        this.targetHashID = targetHashID;
+        this.targetQueueID = targetQueueID;
     }
 
     public String getType() {
@@ -27,10 +33,13 @@ public class Action {
         return record;
     }
 
-    public TaskReminder getTargetHashElement() {return targetHashElement; }
+    public String getTargetHashID() {
+        return targetHashID;
+    }
 
-    public TaskReminder getTargetQueueElement() {return  targetQueueElement; }
-
+    public String getTargetQueueID() {
+        return targetQueueID;
+    }
 }
 
 

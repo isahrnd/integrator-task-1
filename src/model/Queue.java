@@ -6,14 +6,14 @@ public class Queue<K, V> implements iQueue<K, V>{
     private Node<K, V> tail;
     private int size;
 
-    public Queue(){
+    public Queue() {
         size = 0;
     }
 
-    public Node<K, V> search(K key){
+    public Node<K, V> search(K key) {
         Node<K, V> currentNode = head;
         while (currentNode != null) {
-            if (currentNode.getKey().equals(key)){
+            if (currentNode.getKey().equals(key)) {
                 return currentNode;
             }
             currentNode = currentNode.getNext();
@@ -21,7 +21,8 @@ public class Queue<K, V> implements iQueue<K, V>{
         return null;
     }
 
-    public void delete(Node<K, V> nodeToDelete){
+    public void delete(Node<K, V> nodeToDelete) {
+        size--;
         //node to delete is head.
         if (nodeToDelete.equals(head)) {
             head = nodeToDelete.getNext();
@@ -34,7 +35,7 @@ public class Queue<K, V> implements iQueue<K, V>{
         }
 
         //node to delete is tail
-        if (nodeToDelete.equals(tail)){
+        if (nodeToDelete.equals(tail)) {
             tail = nodeToDelete.getPrevious();
             tail.setNext(null);
             return;
@@ -42,7 +43,7 @@ public class Queue<K, V> implements iQueue<K, V>{
 
         Node<K, V> currentNode = head;
         while (currentNode != null) {
-            if (currentNode.equals(nodeToDelete)){
+            if (currentNode.equals(nodeToDelete)) {
                 Node<K, V> prevNode = currentNode.getPrevious();
                 Node<K, V> nextNode = currentNode.getNext();
                 prevNode.setNext(nextNode);
@@ -54,7 +55,7 @@ public class Queue<K, V> implements iQueue<K, V>{
     }
 
     @Override
-    public void enqueue(K key, V value){
+    public void enqueue(K key, V value) {
         Node<K, V> node = new Node<>(key, value);
         if (isEmpty()) {
             head = node;
@@ -67,15 +68,15 @@ public class Queue<K, V> implements iQueue<K, V>{
     }
 
     @Override
-    public V dequeue(){
-        if (isEmpty()){
+    public V dequeue() {
+        if (isEmpty()) {
             return null;
         }
         V value = head.getValue();
         Node<K, V> newHead = head.getNext();
-        if (newHead != null){
+        if (newHead != null) {
             newHead.setPrevious(null);
-        } else{
+        } else {
             tail = null;
         }
         head = newHead;
@@ -88,13 +89,24 @@ public class Queue<K, V> implements iQueue<K, V>{
     }
 
     @Override
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size == 0;
     }
 
     @Override
-    public int size(){
+    public int size() {
         return size;
     }
 
+    public void setSize(int size){
+        this.size = size;
+    }
+
+    public Node<K, V> getHead() {
+        return head;
+    }
+
+    public void setHead(Node<K, V> head) {
+        this.head = head;
+    }
 }

@@ -4,7 +4,7 @@ import model.TaskReminderController;
 
 public class Main {
 
-    public static TaskReminderController controller ;
+    public static TaskReminderController controller;
     public static Scanner sc;
 
     public Main() {
@@ -65,27 +65,35 @@ public class Main {
     }
 
     public void add(){
-        System.out.println("Enter ID:");
+        System.out.println("Enter the ID of the new item:");
         String id = sc.nextLine();
-        System.out.println("Enter title:");
+        System.out.println("Enter the title:");
         String title = sc.nextLine();
-        System.out.println("Enter description:");
+        System.out.println("Enter the description:");
         String description = sc.nextLine();
-        System.out.println("Enter due date (dd/mm/yyyy):");
+        System.out.println("Enter the due date (dd/mm/yyyy):");
         String dueDate = sc.nextLine();
-        System.out.println("Select type \n 1: Task \n 2: Reminder");
-        int type = sc.nextInt();
-        sc.nextLine();
+        int type;
+        do {
+            System.out.println("Please indicate the type of item: \n 1: Task \n 2: Reminder");
+            type = sc.nextInt();
+            sc.nextLine();
+        } while (type != 1 && type != 2);
         String msg;
         if (type == 1){
-            System.out.println("The task is priority? \n 1: Yes \n 2: No");
-            int selection = sc.nextInt();
-            sc.nextLine();
+            int selection;
+            do {
+                System.out.println("Is the task priority? \n 1: Yes \n 2: No");
+                selection = sc.nextInt();
+                sc.nextLine();
+            } while (selection != 1 && selection != 2);
             int importance = 0;
             if (selection == 1){
-                System.out.println("Select importance level \n 3: Very important \n 2: Important \n 1: Less important");
-                importance = sc.nextInt();
-                sc.nextLine();
+                do {
+                    System.out.println("Select the importance level: \n 1: Low \n 2: Moderate \n 3: High \n 4: Very high");
+                    importance = sc.nextInt();
+                    sc.nextLine();
+                } while (importance < 1 || importance > 4);
             }
             msg = controller.addElement(id, title, description, dueDate, selection == 1, importance);
         } else {
@@ -95,37 +103,47 @@ public class Main {
     }
 
     public void edit(){
-        System.out.println("Enter ID:");
+        System.out.println("Enter the ID of the item to edit:");
         String id = sc.nextLine();
-        System.out.println("Enter new title:");
+        System.out.println("Enter the new title:");
         String title = sc.nextLine();
-        System.out.println("Enter new description:");
+        System.out.println("Enter the new description:");
         String description = sc.nextLine();
-        System.out.println("Enter new due date (dd/mm/yyyy):");
+        System.out.println("Enter the new due date (dd/mm/yyyy):");
         String dueDate = sc.nextLine();
-        System.out.println("Select type \n 1: Task \n 2: Reminder");
-        int type = sc.nextInt();
-        sc.nextLine();
+        int type;
+        do {
+            System.out.println("Please indicate the type of item: \n 1: Task \n 2: Reminder");
+            type = sc.nextInt();
+            sc.nextLine();
+        } while (type != 1 && type != 2);
         String msg;
         if (type == 1){
-            System.out.println("The task is priority? \n 1: Yes \n 2: No");
-            int selection = sc.nextInt();
-            sc.nextLine();
-            int importance = 0;
-            if (selection == 1){
-                System.out.println("Select new importance level \n 3: Very important \n 2: Important \n 1: Less important");
-                importance = sc.nextInt();
+            int selection;
+            do {
+                System.out.println("Was the task priority? \n 1: Yes \n 2: No");
+                selection = sc.nextInt();
                 sc.nextLine();
+            } while (selection != 1 && selection != 2);
+            if (selection == 1){
+                int importance;
+                do {
+                    System.out.println("Select the new importance level: \n 1: Low \n 2: Moderate \n 3: High \n 4: Very high");
+                    importance = sc.nextInt();
+                    sc.nextLine();
+                } while (importance < 1 || importance > 4);
+                msg = controller.editPriorityTask(id, title, description, dueDate, importance);
+            } else {
+                msg = controller.editNoPriorityTask(id, title, description, dueDate);
             }
-            msg = controller.editElement(id, title, description, dueDate, selection == 1, importance);
         } else {
-            msg = controller.editElement(id, title, description, dueDate);
+            msg = controller.editReminder(id, title, description, dueDate);
         }
         System.out.println(msg);
     }
 
     public void delete(){
-        System.out.println("Enter ID:");
+        System.out.println("Enter the ID of the item to delete:");
         String id = sc.nextLine();
         String msg = controller.deleteElement(id);
         System.out.println(msg);

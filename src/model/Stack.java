@@ -3,9 +3,11 @@ package model;
 public class Stack<K, V> implements iStack<K, V> {
 
     private Node<K, V> top;
+    private int size;
 
     public Stack() {
-        this.top = null;
+        top = null;
+        size = 0;
     }
 
     @Override
@@ -13,6 +15,7 @@ public class Stack<K, V> implements iStack<K, V> {
         Node<K, V> newNode = new Node<>(key, value);
         newNode.setNext(top);
         top = newNode;
+        size++;
     }
 
     @Override
@@ -22,6 +25,7 @@ public class Stack<K, V> implements iStack<K, V> {
         }
         Node<K, V> poppedNode = top;
         top = top.getNext();
+        size--;
         return poppedNode.getValue();
     }
 
@@ -39,6 +43,6 @@ public class Stack<K, V> implements iStack<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 }

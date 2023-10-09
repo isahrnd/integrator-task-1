@@ -20,6 +20,15 @@ public class TaskReminder {
         this.isTask = isTask;
     }
 
+    public TaskReminder(TaskReminder original) {
+        this.id = original.getId();
+        this.title = original.getTitle();
+        this.description = original.getDescription();
+        this.dueDate = (original.getDueDate() != null) ? (Calendar) original.getDueDate().clone() : null;
+        this.importanceLevel = original.getImportanceLevel();
+        this.isTask = original.isTask();
+    }
+
     public String getId() {return id; }
 
     public String getTitle() {
@@ -56,10 +65,6 @@ public class TaskReminder {
 
     public boolean isTask() {
         return isTask;
-    }
-
-    public void setTask(boolean task) {
-        isTask = task;
     }
 
     public String toString() {

@@ -7,4 +7,5 @@ public interface iHashTable <K,V> {
     Node<K,V> search(K key);
     void delete(K key);
     int hash(K key);
+    boolean isEmpty();
 }
