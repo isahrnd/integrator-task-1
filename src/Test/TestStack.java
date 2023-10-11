@@ -37,4 +37,32 @@ public class TestStack{
         assertTrue(stack.isEmpty());
     }
 
+
+
+    @Test
+    public void testPeek(){
+        assertNull(stack.peek());
+
+        stack.push("key1", 12);
+        stack.push("key2", 56);
+
+        Integer peekedValue = stack.peek();
+        assertNotNull(peekedValue);
+        assertEquals(56, (int) peekedValue);
+    }
+
+
+
+    @Test
+    public void testIsEmpty(){
+        assertTrue(stack.isEmpty());
+
+        stack.push("key1", 12);
+
+        assertFalse(stack.isEmpty());
+    }
+    
+
+
+
 }
