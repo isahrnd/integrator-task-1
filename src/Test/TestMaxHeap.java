@@ -22,12 +22,12 @@ public class TestMaxHeap {
         assertTrue(maxHeap.isEmpty());
         assertEquals(0, maxHeap.getHeapSize());
 
-        TaskReminder task1 = new TaskReminder(null, null, null, null, 42, true);
+        TaskReminder task1 = new TaskReminder(null, null, null, null, 30, true);
         maxHeap.insert(task1);
         assertFalse(maxHeap.isEmpty());
         assertEquals(1, maxHeap.getHeapSize());
 
-        TaskReminder task2 = new TaskReminder(null, null, null, null, 100, true);
+        TaskReminder task2 = new TaskReminder(null, null, null, null, 83, true);
         maxHeap.insert(task2);
         assertEquals(2, maxHeap.getHeapSize());
 
