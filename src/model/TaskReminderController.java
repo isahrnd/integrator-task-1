@@ -50,7 +50,7 @@ public class TaskReminderController {
         return msg;
     }
 
-    public String editReminder(String id, String title, String description, String dueDateInput){
+    public String editReminder(String id, String title, String description, String dueDateInput, boolean isUndo){
         String msg = "Reminder edited successfully!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
@@ -59,8 +59,10 @@ public class TaskReminderController {
                 msg = "Error: The reminder with the entered ID doesn't exist.";
             } else {
                 TaskReminder reminder = hashNode.getValue();
-                TaskReminder original = new TaskReminder(reminder);
-                actions.push(id, new Action("Edit element", original));
+                if (!isUndo){
+                    TaskReminder original = new TaskReminder(reminder);
+                    actions.push(id, new Action("Edit element", original));
+                }
                 reminder.setTitle(title);
                 reminder.setDescription(description);
                 reminder.setDueDate(dueDate);
@@ -71,7 +73,7 @@ public class TaskReminderController {
         return msg;
     }
 
-    public String editNoPriorityTask(String id, String title, String description, String dueDateInput){
+    public String editNoPriorityTask(String id, String title, String description, String dueDateInput, boolean isUndo){
         String msg = "No-priority task edited successfully!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
@@ -82,8 +84,10 @@ public class TaskReminderController {
                 Node<String, TaskReminder> queueNode = nonPriorityTasks.search(id);
                 if (queueNode != null) {
                     TaskReminder task = hashNode.getValue();
-                    TaskReminder original = new TaskReminder(task);
-                    actions.push(id, new Action("Edit element", original));
+                    if (!isUndo){
+                        TaskReminder original = new TaskReminder(task);
+                        actions.push(id, new Action("Edit element", original));
+                    }
                     //update the attributes of the element in the table
                     task.setTitle(title);
                     task.setDescription(description);
@@ -102,7 +106,7 @@ public class TaskReminderController {
         return msg;
     }
 
-    public String editPriorityTask(String id, String title, String description, String dueDateInput, int importance){
+    public String editPriorityTask(String id, String title, String description, String dueDateInput, int importance, boolean isUndo){
         String msg = "Priority task edited successfully!";
         try {
             Calendar dueDate = validateDueDate(dueDateInput);
@@ -114,8 +118,10 @@ public class TaskReminderController {
                 if (task.getImportanceLevel() == 0){
                     msg = "Error: The entered ID does not correspond to a priority task.";
                 } else {
-                    TaskReminder original = new TaskReminder(task);
-                    actions.push(id, new Action("Edit element", original));
+                    if (!isUndo){
+                        TaskReminder original = new TaskReminder(task);
+                        actions.push(id, new Action("Edit element", original));
+                    }
                     //update the attributes of the element
                     task.setTitle(title);
                     task.setDescription(description);
@@ -136,7 +142,7 @@ public class TaskReminderController {
         return msg;
     }
 
-    public String deleteElement(String id){
+    public String deleteElement(String id, boolean isUndo){
         String msg = "Reminder removed successfully!";
         Node<String, TaskReminder> hashNode = taskReminderTable.search(id);
         if (hashNode != null){
@@ -152,14 +158,20 @@ public class TaskReminderController {
             if (element.isTask()){
                 if (element.getImportanceLevel() != 0){
                     msg = deletePriorityTask(element);
-                    actions.push(id, new Action("Delete element", element, targetHashID));
+                    if(!isUndo){
+                        actions.push(id, new Action("Delete element", element, targetHashID));
+                    }
                 } else {
                     String targetQueueID = deleteNoPriorityTask(element);
-                    actions.push(id, new Action("Delete element", element, targetHashID, targetQueueID));
+                    if (!isUndo){
+                        actions.push(id, new Action("Delete element", element, targetHashID, targetQueueID));
+                    }
                     msg = "No-priority task deleted successfully!";
                 }
             } else {
-                actions.push(id, new Action("Delete element", element, targetHashID));
+                if (!isUndo){
+                    actions.push(id, new Action("Delete element", element, targetHashID));
+                }
             }
         } else {
             msg = "Error: no element with the entered ID was found.";
@@ -194,7 +206,7 @@ public class TaskReminderController {
             TaskReminder record = action.getRecord();
             String id = record.getId();
             if (actionType.equals("Add element")) {
-                deleteElement(id);
+                deleteElement(id, true);
             } else {
                 int importance = record.getImportanceLevel();
                 if (actionType.equals("Edit element")) {
@@ -203,12 +215,12 @@ public class TaskReminderController {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                     String dueDate = dateFormat.format(record.getDueDate().getTime());
                     if (!record.isTask()){
-                        editReminder(id, title, description, dueDate);
+                        editReminder(id, title, description, dueDate, true);
                     } else {
                         if (importance != 0){
-                            editPriorityTask(id, title, description, dueDate, importance);
+                            editPriorityTask(id, title, description, dueDate, importance, true);
                         } else {
-                            editNoPriorityTask(id, title, description, dueDate);
+                            editNoPriorityTask(id, title, description, dueDate, true);
                         }
                     }
                 } else {

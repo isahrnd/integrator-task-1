@@ -132,12 +132,12 @@ public class Main {
                     importance = sc.nextInt();
                     sc.nextLine();
                 } while (importance < 1 || importance > 4);
-                msg = controller.editPriorityTask(id, title, description, dueDate, importance);
+                msg = controller.editPriorityTask(id, title, description, dueDate, importance, false);
             } else {
-                msg = controller.editNoPriorityTask(id, title, description, dueDate);
+                msg = controller.editNoPriorityTask(id, title, description, dueDate, false);
             }
         } else {
-            msg = controller.editReminder(id, title, description, dueDate);
+            msg = controller.editReminder(id, title, description, dueDate, false);
         }
         System.out.println(msg);
     }
@@ -145,7 +145,7 @@ public class Main {
     public void delete(){
         System.out.println("Enter the ID of the item to delete:");
         String id = sc.nextLine();
-        String msg = controller.deleteElement(id);
+        String msg = controller.deleteElement(id, false);
         System.out.println(msg);
     }
 
