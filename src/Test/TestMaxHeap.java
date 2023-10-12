@@ -8,17 +8,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestMaxHeap {
+public class TestMaxHeap{
 
     private MaxHeap maxHeap;
 
     @Before
-    public void setUp() {
+    public void setUp(){
         maxHeap = new MaxHeap();
     }
 
     @Test
-    public void testInsertAndExtractMaximum() throws HeapSizeException {
+    public void testInsertAndExtractMaximum() throws HeapSizeException{
         assertTrue(maxHeap.isEmpty());
         assertEquals(0, maxHeap.getHeapSize());
 
@@ -38,5 +38,30 @@ public class TestMaxHeap {
         TaskReminder maxTask2 = maxHeap.maximum();
         assertEquals(30, maxTask2.getImportanceLevel());
     }
+
+
+
+    @Test(expected = HeapSizeException.class)
+    public void testInsertMaxHeapSizeExceeded() throws HeapSizeException {
+        for (int i = 0; i <= 1000; i++) {
+            TaskReminder task = new TaskReminder(null, null, null, null, i, true);
+            maxHeap. insert(task);
+        }
+    }
+
+    @Test
+    public void testIncreaseKey() throws HeapSizeException {
+        TaskReminder task1 = new TaskReminder(null, null, null, null, 30, true);
+        maxHeap.insert(task1);
+
+        TaskReminder task2 = new TaskReminder(null, null, null, null, 10, true);
+        maxHeap.increaseKey(0, task2);
+
+        TaskReminder maxTask = maxHeap.maximum();
+        assertEquals(30, maxTask.getImportanceLevel());
+    }
+
+
+
 }
 

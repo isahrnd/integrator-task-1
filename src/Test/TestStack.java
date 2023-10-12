@@ -63,6 +63,18 @@ public class TestStack{
     }
 
 
+    @Test
+    public void testSize(){
+        assertEquals(0, stack.size());
 
+        stack.push("key1", 12);
+        assertEquals(1, stack.size());
+
+        stack.push("key2", 56);
+        assertEquals(2, stack.size());
+
+        stack.pop();
+        assertEquals(1, stack.size());
+    }
 
 }
