@@ -42,15 +42,17 @@ public class TestMaxHeap{
 
 
     @Test(expected = HeapSizeException.class)
-    public void testInsertMaxHeapSizeExceeded() throws HeapSizeException {
+    public void testInsertMaxHeapSizeExceeded() throws HeapSizeException{
         for (int i = 0; i <= 1000; i++) {
             TaskReminder task = new TaskReminder(null, null, null, null, i, true);
             maxHeap. insert(task);
         }
     }
 
+
+
     @Test
-    public void testIncreaseKey() throws HeapSizeException {
+    public void testIncreaseKey() throws HeapSizeException{
         TaskReminder task1 = new TaskReminder(null, null, null, null, 30, true);
         maxHeap.insert(task1);
 
@@ -62,6 +64,29 @@ public class TestMaxHeap{
     }
 
 
+
+
+    @Test
+    public void testIsEmpty() throws HeapSizeException{
+        assertTrue(maxHeap.isEmpty());
+
+        TaskReminder task1 = new TaskReminder(null, null, null, null, 30, true);
+        maxHeap.insert(task1);
+
+        assertFalse(maxHeap.isEmpty());
+    }
+
+
+
+    @Test
+    public void testGetHeapSize() throws HeapSizeException{
+        assertEquals(0, maxHeap.getHeapSize());
+
+        TaskReminder task1 = new TaskReminder(null, null, null, null, 30, true);
+        maxHeap.insert(task1);
+
+        assertEquals(1, maxHeap.getHeapSize());
+    }
 
 }
 
