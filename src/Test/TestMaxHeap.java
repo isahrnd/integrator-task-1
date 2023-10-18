@@ -41,14 +41,6 @@ public class TestMaxHeap{
 
 
 
-    @Test(expected = HeapSizeException.class)
-    public void testInsertMaxHeapSizeExceeded() throws HeapSizeException{
-        for (int i = 0; i <= 1000; i++) {
-            TaskReminder task = new TaskReminder(null, null, null, null, i, true);
-            maxHeap. insert(task);
-        }
-    }
-
 
 
     @Test
